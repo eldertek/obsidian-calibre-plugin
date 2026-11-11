@@ -18,7 +18,8 @@ export class CalibreView extends ItemView {
   }
 
   async onOpen() {
-    const container = this.containerEl.children[1];
+    const container = (this.contentEl || (this.containerEl.children[1] as HTMLElement) || this.containerEl);
+    container.empty();
     try {
       const iframe = container.createEl('iframe');
       iframe.setAttribute('sandbox', 'allow-forms allow-presentation allow-same-origin allow-scripts allow-modals allow-downloads allow-popups');

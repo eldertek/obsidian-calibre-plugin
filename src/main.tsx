@@ -44,11 +44,22 @@ export default class CalibrePlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign(DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async activateView(direction?: SplitDirection) {
-		const leaf = this.app.workspace.splitActiveLeaf(direction ?? this.settings.splitDirection);
+		let leaf = null;
+		try {
+			leaf = (this.app.workspace as any).splitActiveLeaf?.(direction ?? this.settings.splitDirection);
+		} catch (e) {
+			leaf = null;
+		}
+		if (!leaf) {
+			leaf = this.app.workspace.getLeaf(true);
+		}
+		if (!leaf) {
+			return;
+		}
 		await leaf.setViewState({
 			type: CALIBRE_VIEW_TYPE,
 			active: true,
